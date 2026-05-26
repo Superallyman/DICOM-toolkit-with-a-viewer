@@ -1,0 +1,42 @@
+/* styles/upload.module.css */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.heading {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.label {
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.select,
+.input,
+.button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.button {
+  margin-left: 1rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}

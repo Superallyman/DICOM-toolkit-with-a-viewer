@@ -1,0 +1,158 @@
+services:
+  proxy:
+    image: nginx:1.27-alpine
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+      orthanc:
+        condition: service_healthy
+      viewer:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8080/api}
+        NEXT_PUBLIC_OHIF_BASE_URL: ${NEXT_PUBLIC_OHIF_BASE_URL:-http://localhost:8080/viewer}
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8080/api}
+      NEXT_PUBLIC_OHIF_BASE_URL: ${NEXT_PUBLIC_OHIF_BASE_URL:-http://localhost:8080/viewer}
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      BASE_URL: ${BASE_URL:-http://localhost:8080/api}
+      OHIF_PUBLIC_URL: ${OHIF_PUBLIC_URL:-http://localhost:8080/viewer}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:3000,http://127.0.0.1:3000}
+      CORS_ERROR_ORIGIN: ${CORS_ERROR_ORIGIN:-http://localhost:8080}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://dicom_admin:pass123@postgres:5432/dicomdb}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-before-production}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-60}
+      PERSISTENT_OUTPUT_DIR: /app/persistent_output
+      OHIF_VIEWER_DIR: /app/ohif
+      DICOM_ARCHIVE_ENABLED: ${DICOM_ARCHIVE_ENABLED:-true}
+      DICOM_ARCHIVE_DICOMWEB_URL: ${DICOM_ARCHIVE_DICOMWEB_URL:-http://orthanc:8042/dicom-web}
+      DICOM_ARCHIVE_STOW_URL: ${DICOM_ARCHIVE_STOW_URL:-http://orthanc:8042/dicom-web/studies}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      orthanc:
+        condition: service_healthy
+    volumes:
+      - api-output:/app/persistent_output
+      - ./backend/config.properties:/app/config.properties:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/v1/health/live', timeout=3).read()\""]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./backend
+    command: ["python", "-m", "app.workers.job_worker"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://dicom_admin:pass123@postgres:5432/dicomdb}
+      BASE_URL: ${BASE_URL:-http://localhost:8080/api}
+      OHIF_PUBLIC_URL: ${OHIF_PUBLIC_URL:-http://localhost:8080/viewer}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-before-production}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-60}
+      PERSISTENT_OUTPUT_DIR: /app/persistent_output
+      DICOM_ARCHIVE_ENABLED: ${DICOM_ARCHIVE_ENABLED:-true}
+      DICOM_ARCHIVE_DICOMWEB_URL: ${DICOM_ARCHIVE_DICOMWEB_URL:-http://orthanc:8042/dicom-web}
+      DICOM_ARCHIVE_STOW_URL: ${DICOM_ARCHIVE_STOW_URL:-http://orthanc:8042/dicom-web/studies}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      orthanc:
+        condition: service_healthy
+    volumes:
+      - api-output:/app/persistent_output
+      - ./backend/config.properties:/app/config.properties:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"from pathlib import Path; data=Path('/proc/1/cmdline').read_bytes(); raise SystemExit(0 if b'app.workers.job_worker' in data else 1)\""]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+    restart: unless-stopped
+
+  viewer:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./.runtime/ohif-dist:/usr/share/nginx/html:ro
+      - ./infra/viewer/app-config.js:/usr/share/nginx/html/app-config.js:ro
+      - ./infra/viewer/init-service-worker.js:/usr/share/nginx/html/init-service-worker.js:ro
+      - ./infra/viewer/sw.js:/usr/share/nginx/html/sw.js:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/app-config.js || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  orthanc:
+    image: jodogne/orthanc-plugins:1.12.4
+    environment:
+      ORTHANC_NAME: DICOM Toolkit Archive
+    volumes:
+      - ./infra/orthanc/orthanc.json:/etc/orthanc/orthanc.json:ro
+      - orthanc-storage:/var/lib/orthanc/db
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8042/system || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-dicom_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pass123}
+      POSTGRES_DB: ${POSTGRES_DB:-dicomdb}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+volumes:
+  api-output:
+  orthanc-storage:
+  postgres-data:
+  redis-data:

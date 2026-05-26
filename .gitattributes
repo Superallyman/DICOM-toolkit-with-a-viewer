@@ -1,0 +1,23 @@
+* text=auto
+
+*.sh text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+
+*.dcm binary
+*.dicom binary
+*.nii binary
+*.mha binary
+*.mhd binary
+*.nrrd binary

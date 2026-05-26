@@ -1,0 +1,46 @@
+fastapi==0.100.0
+uvicorn[standard]==0.23.0
+
+# imaging / DICOM
+pydicom==2.4.1
+pillow==10.4.0
+tifffile>=2024.8.30
+numpy>=2.1,<2.3
+opencv-python-headless==4.10.0.84
+reportlab==4.0.4
+pdf2image==1.16.3
+PyMuPDF==1.24.11
+tqdm==4.67.1
+
+# --- Pixel-data codecs for pydicom -----------------------------------------
+# Primary: pylibjpeg handler + plugins
+pylibjpeg>=2.0.0
+pylibjpeg-libjpeg>=2.0.0      # JPEG baseline
+pylibjpeg-openjpeg>=2.0.0     # JPEG 2000
+pylibjpeg-rle>=2.0.0          # RLE
+
+# Fallback/extra: GDCM handler (bundled wheels, no OS libs needed)
+python-gdcm
+
+# Useful for our MIME → image decode path (JPEG-LS etc.)
+imagecodecs>=2024.6.1
+# (Optional) If you want an extra Pillow-based JPEG-LS fallback:
+# pillow-jpls>=1.0.0
+
+# api utils
+requests==2.31.0
+python-multipart==0.0.6
+slowapi==0.1.8
+PyJWT[crypto]==2.8.0
+python-dotenv==1.0.1
+httpx>=0.27,<0.28
+
+# db / orm / migrations
+SQLAlchemy==2.0.23
+asyncpg==0.30.0
+alembic==1.13.1
+psycopg2-binary==2.9.10
+
+# config & logging
+pydantic-settings==2.2.1
+loguru==0.7.2

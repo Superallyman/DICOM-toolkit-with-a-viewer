@@ -1,0 +1,37 @@
+.git
+.gitignore
+.dockerignore
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.vscode/
+.idea/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.log
+.env
+.env.*
+venv/
+.venv/
+env/
+persistent_output/
+uploads/
+outputs/
+studies/
+thumbnails/
+testdata/
+Test client scripts/
+API Architecture diagrams/
+legacy docker files/
+ohif-dist/
+.alembic/
+*.dcm
+*.dicom
+*.mime
+*.eml
+docker-compose.yml
+azure-pipelines*.yml

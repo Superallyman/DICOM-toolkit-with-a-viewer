@@ -1,0 +1,85 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# External viewer source and generated runtime output
+ohif-viewer/
+.external/
+.runtime/
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# Local database and runtime files
+*.db
+*.sqlite
+*.sqlite3
+postgres-data/
+redis-data/
+orthanc-storage/
+
+# Medical imaging outputs and uploaded artifacts
+# Keep real patient data, generated exports, thumbnails, and staged files out of git.
+persistent_output/
+backend/persistent_output/
+backend/uploads/
+backend/outputs/
+backend/studies/
+backend/thumbnails/
+backend/app/persistent_output/
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.mha
+*.mhd
+*.nrrd
+*.mime
+*.eml
+
+# Docker / local generated files
+docker-compose.override.yml
+*.log
+
+# Internal planning/refactor notes
+ARCHITECTURE_PROPOSAL.md
+IMPLEMENTATION_NOTES.md

@@ -1,0 +1,48 @@
+/* styles/upload.module.css */
+.container {
+  background-color: #0f172a;
+  color: white;
+  min-height: 100vh;
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.alert {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  margin-bottom: 1.5rem;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.select {
+  padding: 0.5rem;
+  border: 1px solid #475569;
+  background-color: #334155;
+  color: white;
+  border-radius: 0.375rem;
+}
+
+.link {
+  color: #60a5fa;
+  text-decoration: underline;
+}

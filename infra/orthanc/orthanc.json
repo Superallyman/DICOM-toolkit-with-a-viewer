@@ -1,0 +1,19 @@
+{
+  "Name": "DICOM Toolkit Archive",
+  "StorageDirectory": "/var/lib/orthanc/db",
+  "IndexDirectory": "/var/lib/orthanc/db",
+  "RemoteAccessAllowed": true,
+  "AuthenticationEnabled": false,
+  "DicomAet": "DICOMTOOLKIT",
+  "DicomPort": 4242,
+  "HttpPort": 8042,
+  "Plugins": ["/usr/local/share/orthanc/plugins"],
+  "DicomWeb": {
+    "Enable": true,
+    "Root": "/dicom-web/",
+    "PublicRoot": "/dicom-web/",
+    "EnableWado": true,
+    "WadoRoot": "/wado",
+    "Ssl": false
+  }
+}
