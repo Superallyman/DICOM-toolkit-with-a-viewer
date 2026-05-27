@@ -15,6 +15,7 @@ A production-oriented medical imaging workflow platform for ingesting, convertin
 ## Contents
 
 - [What This App Does](#what-this-app-does)
+- [App UI](#app-ui)
 - [Architecture](#architecture)
 - [Repository Layout](#repository-layout)
 - [Core Workflows](#core-workflows)
@@ -41,6 +42,21 @@ DICOM Toolkit App turns several medical-imaging tasks into one clean workflow:
 - Launch studies in OHIF for CT, MR, X-ray, ultrasound, secondary capture, and other DICOM modalities supported by the archive/viewer stack.
 - Run heavier processing through background jobs instead of blocking the web request.
 - Keep DICOM storage and DICOMweb serving in a dedicated archive plane rather than making the Python API behave like a PACS.
+
+## App UI
+
+| Home | Dashboard |
+| --- | --- |
+| ![DICOM Toolkit home page](docs/AppScreenshots/Homepage.jpg) | ![Admin dashboard](docs/AppScreenshots/Dashboard.jpg) |
+
+| Convert To DICOM | MIME Ingest |
+| --- | --- |
+| ![Convert media to DICOM workflow](docs/AppScreenshots/ConvertToDICOM.jpg) | ![MIME ingest workflow](docs/AppScreenshots/MIME.jpg) |
+
+| Anonymization | OHIF Viewer |
+| --- | --- |
+| ![DICOM anonymization workflow](docs/AppScreenshots/Anon.jpg) | ![OHIF viewer showing a DICOM study](docs/AppScreenshots/OHIFViewer.jpg) |
+
 
 ## Architecture
 
