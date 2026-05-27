@@ -155,9 +155,9 @@ export default function Navbar() {
       top={0}
       zIndex={10}
     >
-      <Flex align="center" maxW="7xl" mx="auto" gap={4}>
+      <Flex align="center" w="100%" minW={0} gap={{ base: 3, xl: 4 }}>
         {/* Brand */}
-        <Link as={NextLink} href="/" _hover={{ textDecoration: "none" }}>
+        <Link as={NextLink} href="/" _hover={{ textDecoration: "none" }} flexShrink={0}>
           <HStack spacing={1} whiteSpace="nowrap">
             <Text fontSize="xl" fontWeight="black" color="teal.300">
               DICOM Toolkit
@@ -170,10 +170,11 @@ export default function Navbar() {
 
         {/* Desktop nav (no wrap) */}
         <HStack
-          spacing={6}
-          ml={{ md: 6 }}
-          display={{ base: "none", md: "flex" }}
+          spacing={{ xl: 4, "2xl": 6 }}
+          ml={{ xl: 4, "2xl": 6 }}
+          display={{ base: "none", xl: "flex" }}
           whiteSpace="nowrap"
+          minW={0}
         >
           <NavLink href="/" label="Home" />
           <Menu placement="bottom-start" isLazy>
@@ -237,7 +238,7 @@ export default function Navbar() {
 
           <NavLink href="/AdminDashboard" label="Dashboard" />
           <NavLink href="/jobs" label="Jobs" />
-          <NavLink href="/studies" label="Converted StudyList" />
+          <NavLink href="/studies" label="Studies" />
           <NavLink
             href="/local-dicom-viewer"
             label="Local DICOM Viewer"
@@ -257,13 +258,15 @@ export default function Navbar() {
           />
         </HStack>
 
-        <Spacer />
+        <Spacer minW={0} />
 
         {/* Right side: user + logout */}
-        <HStack spacing={4} align="center">
-          <HStack spacing={3} display={{ base: "none", sm: "flex" }} whiteSpace="nowrap">
+        <HStack spacing={{ base: 2, "2xl": 4 }} align="center" flexShrink={0}>
+          <HStack spacing={3} display={{ base: "none", lg: "flex" }} whiteSpace="nowrap">
             <Text color="gray.300" fontSize="sm">👤 {username || "User"}</Text>
-            <Text color="yellow.300" fontSize="sm">⏳ {countdown}</Text>
+            <Text color="yellow.300" fontSize="sm" display={{ base: "none", "2xl": "block" }}>
+              ⏳ {countdown}
+            </Text>
           </HStack>
 
           <Button size="sm" colorScheme="red" onClick={handleLogout}>
@@ -274,7 +277,7 @@ export default function Navbar() {
           <IconButton
             aria-label="Open menu"
             icon={<HamburgerIcon />}
-            display={{ base: "inline-flex", md: "none" }}
+            display={{ base: "inline-flex", xl: "none" }}
             variant="ghost"
             color="white"
             onClick={mobile.onOpen}

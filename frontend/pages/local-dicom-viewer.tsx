@@ -10,12 +10,13 @@ export default function LocalDicomViewerPage() {
   const embeddedViewerUrl = `${localViewerUrl}?session=${viewerSession}`;
 
   return (
-    <Box bg="gray.900" minH="100vh">
+    <Box bg="gray.900" h="100dvh" overflow="hidden" display="flex" flexDirection="column">
       <Navbar />
 
       <Flex
+        flexShrink={0}
         px={{ base: 3, md: 6 }}
-        pb={6}
+        pb={3}
         gap={4}
         align={{ base: "stretch", md: "center" }}
         justify="space-between"
@@ -50,19 +51,19 @@ export default function LocalDicomViewerPage() {
         </HStack>
       </Flex>
 
-      <Box px={{ base: 3, md: 6 }} pb={6}>
+      <Box px={{ base: 3, md: 6 }} pb={3} flex="1" minH={0}>
         <Box
           key={viewerSession}
           as="iframe"
           src={embeddedViewerUrl}
           title="OHIF Local DICOM Viewer"
           width="100%"
-          height="calc(100vh - 180px)"
-          minH="620px"
+          height="100%"
           border="1px solid"
           borderColor="gray.700"
           borderRadius="md"
           bg="black"
+          display="block"
         />
       </Box>
     </Box>
