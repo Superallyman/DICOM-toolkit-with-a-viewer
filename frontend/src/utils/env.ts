@@ -36,3 +36,5 @@ export const buildViewerUrl = ({
 
 export const buildStudyViewerUrl = (studyInstanceUID: string) =>
   buildViewerUrl({ studyInstanceUID });
+
+export const buildLocalViewerUrl = () => `${OHIF_BASE_URL}/local`;

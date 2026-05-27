@@ -239,6 +239,11 @@ export default function Navbar() {
           <NavLink href="/jobs" label="Jobs" />
           <NavLink href="/studies" label="Converted StudyList" />
           <NavLink
+            href="/local-dicom-viewer"
+            label="Local DICOM Viewer"
+            hint="Open .dcm files or folders directly in OHIF"
+          />
+          <NavLink
             href="/anonymize-dicom"
             label="DICOM Anonymizer"
             hint="Anonymize DICOM using custom rules"
@@ -309,6 +314,9 @@ export default function Navbar() {
               </Link>
               <Link as={NextLink} href="/studies" onClick={mobile.onClose}>
                 Studies
+              </Link>
+              <Link as={NextLink} href="/local-dicom-viewer" onClick={mobile.onClose}>
+                Local DICOM Viewer
               </Link>
               <Link as={NextLink} href="/anonymize-dicom" onClick={mobile.onClose}>
                 DICOM Anonymizer

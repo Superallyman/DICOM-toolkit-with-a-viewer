@@ -328,6 +328,7 @@ Open:
 | API | `http://localhost:8080/api/v1` |
 | API health | `http://localhost:8080/api/v1/health/live` |
 | OHIF viewer | `http://localhost:8080/viewer` |
+| OHIF local file loader | `http://localhost:8080/viewer/local` |
 | DICOMweb | `http://localhost:8080/dicom-web` |
 | WADO-URI | `http://localhost:8080/wado` |
 
@@ -447,6 +448,8 @@ Legacy conversion and viewer compatibility routes have been removed. The app now
 ## OHIF Viewer Integration
 
 The app shell does not try to be a second diagnostic viewer. It launches OHIF with study identifiers and lets OHIF retrieve imaging data from the archive.
+
+For browser-local DICOM files, use the app's Local DICOM Viewer navigation item or open `/viewer/local` directly. OHIF can load selected `.dcm` files, selected folders, or drag-and-dropped files without uploading them to the API or Orthanc.
 
 Viewer URLs are generated through:
 

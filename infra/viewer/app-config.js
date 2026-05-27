@@ -31,5 +31,12 @@ window.config = {
         omitQuotationForMultipartRequest: true,
       },
     },
+    {
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomlocal',
+      sourceName: 'dicomlocal',
+      configuration: {
+        friendlyName: 'Local DICOM files',
+      },
+    },
   ],
 };
