@@ -4,6 +4,20 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $ohifIndex = Join-Path $repoRoot ".runtime\ohif-dist\index.html"
 
+function Invoke-CheckedNative {
+  param(
+    [Parameter(Mandatory = $true)]
+    [scriptblock] $Command,
+    [Parameter(Mandatory = $true)]
+    [string] $Description
+  )
+
+  & $Command
+  if ($LASTEXITCODE -ne 0) {
+    throw "$Description failed with exit code $LASTEXITCODE"
+  }
+}
+
 if (-not (Test-Path $ohifIndex)) {
   Write-Host "OHIF dist is missing. Building the viewer first..."
   & (Join-Path $PSScriptRoot "build-ohif.ps1")
@@ -11,8 +25,8 @@ if (-not (Test-Path $ohifIndex)) {
 
 Push-Location $repoRoot
 try {
-  docker compose up -d --build
-  docker compose ps
+  Invoke-CheckedNative { docker compose up -d --build } "Docker Compose startup"
+  Invoke-CheckedNative { docker compose ps } "Docker Compose status"
 }
 finally {
   Pop-Location

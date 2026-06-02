@@ -22,7 +22,7 @@ if [ ! -L /app/ohif/studies ]; then
 fi
 
 # --- DB migrations (optional but recommended) ---
-if [ -f /app/alembic.ini ] && [ -d /app/alembic ]; then
+if [ "${RUN_MIGRATIONS:-true}" != "false" ] && [ -f /app/alembic.ini ] && [ -d /app/alembic ]; then
   alembic -c /app/alembic.ini upgrade head
 fi
 

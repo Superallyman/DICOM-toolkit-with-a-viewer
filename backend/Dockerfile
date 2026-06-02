@@ -21,7 +21,6 @@ COPY app ./app
 COPY config ./config
 COPY alembic ./alembic
 COPY alembic.ini ./alembic.ini
-COPY dicomAnonymizer ./dicomAnonymizer
 COPY config.properties ./config.properties
 
 RUN mkdir -p /app/persistent_output /app/ohif

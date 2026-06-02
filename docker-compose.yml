@@ -53,6 +53,7 @@ services:
       DICOM_ARCHIVE_ENABLED: ${DICOM_ARCHIVE_ENABLED:-true}
       DICOM_ARCHIVE_DICOMWEB_URL: ${DICOM_ARCHIVE_DICOMWEB_URL:-http://orthanc:8042/dicom-web}
       DICOM_ARCHIVE_STOW_URL: ${DICOM_ARCHIVE_STOW_URL:-http://orthanc:8042/dicom-web/studies}
+      RUN_MIGRATIONS: "true"
     depends_on:
       postgres:
         condition: service_healthy
@@ -82,7 +83,10 @@ services:
       DICOM_ARCHIVE_ENABLED: ${DICOM_ARCHIVE_ENABLED:-true}
       DICOM_ARCHIVE_DICOMWEB_URL: ${DICOM_ARCHIVE_DICOMWEB_URL:-http://orthanc:8042/dicom-web}
       DICOM_ARCHIVE_STOW_URL: ${DICOM_ARCHIVE_STOW_URL:-http://orthanc:8042/dicom-web/studies}
+      RUN_MIGRATIONS: "false"
     depends_on:
+      api:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       orthanc:

@@ -1,13 +1,62 @@
 import { RepeatIcon, ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Heading, HStack, IconButton, Tooltip } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Button, Flex, Heading, HStack, IconButton, Spinner, Tooltip } from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "../components/Navbar";
 import { buildLocalViewerUrl } from "../src/utils/env";
 
 export default function LocalDicomViewerPage() {
-  const [viewerSession, setViewerSession] = useState(0);
+  const [viewerSession, setViewerSession] = useState(() => Date.now());
+  const [viewerReady, setViewerReady] = useState(false);
   const localViewerUrl = buildLocalViewerUrl();
-  const embeddedViewerUrl = `${localViewerUrl}?session=${viewerSession}`;
+  const embeddedViewerUrl = useMemo(() => {
+    const separator = localViewerUrl.includes("?") ? "&" : "?";
+    return `${localViewerUrl}${separator}session=${viewerSession}`;
+  }, [localViewerUrl, viewerSession]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const resetViewerRuntimeCache = async () => {
+      try {
+        if ("serviceWorker" in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        }
+
+        if ("caches" in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+        }
+      } finally {
+        if (!cancelled) {
+          setViewerSession(Date.now());
+          setViewerReady(true);
+        }
+      }
+    };
+
+    resetViewerRuntimeCache();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") {
+        setViewerSession(Date.now());
+      }
+    };
+
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    window.addEventListener("pageshow", refreshWhenVisible);
+
+    return () => {
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+      window.removeEventListener("pageshow", refreshWhenVisible);
+    };
+  }, []);
 
   return (
     <Box bg="gray.900" h="100dvh" overflow="hidden" display="flex" flexDirection="column">
@@ -31,7 +80,7 @@ export default function LocalDicomViewerPage() {
               aria-label="Load another local DICOM study"
               icon={<RepeatIcon />}
               colorScheme="teal"
-              onClick={() => setViewerSession((session) => session + 1)}
+              onClick={() => setViewerSession(Date.now())}
               flex={{ base: 1, md: "initial" }}
             />
           </Tooltip>
@@ -52,19 +101,25 @@ export default function LocalDicomViewerPage() {
       </Flex>
 
       <Box px={{ base: 3, md: 6 }} pb={3} flex="1" minH={0}>
-        <Box
-          key={viewerSession}
-          as="iframe"
-          src={embeddedViewerUrl}
-          title="OHIF Local DICOM Viewer"
-          width="100%"
-          height="100%"
-          border="1px solid"
-          borderColor="gray.700"
-          borderRadius="md"
-          bg="black"
-          display="block"
-        />
+        {viewerReady ? (
+          <Box
+            key={viewerSession}
+            as="iframe"
+            src={embeddedViewerUrl}
+            title="OHIF Local DICOM Viewer"
+            width="100%"
+            height="100%"
+            border="1px solid"
+            borderColor="gray.700"
+            borderRadius="md"
+            bg="black"
+            display="block"
+          />
+        ) : (
+          <Flex h="100%" align="center" justify="center" bg="black">
+            <Spinner color="teal.300" size="xl" />
+          </Flex>
+        )}
       </Box>
     </Box>
   );
