@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Image, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Image, Text, VStack, Link } from '@chakra-ui/react';
 import { buildStudyViewerUrl } from '../src/utils/env';
 
 interface Thumbnail {
@@ -16,9 +16,14 @@ interface ThumbnailsGridProps {
 const ThumbnailsGrid: React.FC<ThumbnailsGridProps> = ({ thumbnails }) => {
   if (!thumbnails.length) return <Text>No thumbnails found.</Text>;
 
-  const handleViewerLaunch = (studyUID?: string) => {
-    if (!studyUID) return;
-    window.open(buildStudyViewerUrl(studyUID), '_blank', 'noopener,noreferrer');
+  const handleViewerLaunch = (studyUID?: string, fallbackUrl?: string) => {
+    const url = studyUID
+      ? buildStudyViewerUrl(studyUID)
+      : fallbackUrl;
+
+    if (!url) return;
+
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -41,16 +46,25 @@ const ThumbnailsGrid: React.FC<ThumbnailsGridProps> = ({ thumbnails }) => {
               borderRadius="md"
             />
           </a>
-          <Text fontSize="xs" noOfLines={1}>
-            {thumb.sopInstanceUID}
-          </Text>
-          <Button
+          <Link
+            href={thumb.viewerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            _hover={{ textDecoration: 'underline' }}
+          >
+            <Text fontSize="xs" noOfLines={1}>
+              {thumb.sopInstanceUID}
+            </Text>
+          </Link>
+          {/* <Button //why doesn't this button work but the href above it does???
             size="xs"
             colorScheme="blue"
-            onClick={() => handleViewerLaunch(thumb.studyInstanceUID)}
+            onClick={() =>
+              handleViewerLaunch(thumb.studyInstanceUID, thumb.viewerUrl)
+            }
           >
             Launch Viewer
-          </Button>
+          </Button> */}
         </VStack>
       ))}
     </Box>

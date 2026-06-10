@@ -1,6 +1,12 @@
 // pages/studies.tsx
 import { useEffect, useState } from "react";
-import axios from "axios";
+
+
+// import axios from "axios"; this line is redundant since it's already done in the auth client "api" from src/utilz/axiosInstance
+
+import api from "../src/utils/axiosInstance"; //adding this to match the other pages fixes the broken viewer links
+
+
 import {
   Box,
   Heading,
@@ -71,7 +77,7 @@ export default function StudiesPage() {
   useEffect(() => {
     const fetchStudiesAndThumbs = async () => {
       try {
-        const { data: mapped } = await axios.get<Study[]>(
+        const { data: mapped } = await api.get<Study[]>(
           `${API_URL}/studies`,
           {
             params: {
@@ -194,23 +200,20 @@ export default function StudiesPage() {
                   </Text>
                 </VStack>
 
-                <Button
-                  colorScheme="teal"
-                  bg="teal.500"
-                  _hover={{ bg: "teal.400" }}
-                  onClick={() => launchViewer(study.StudyInstanceUID)}
-                >
-                  🖥️ Launch Viewer
-                </Button>
+                {loadingThumbs ? (
+                  <Spinner size="sm" color="gray.400" />
+                ) : (
+                  <ThumbnailsGrid thumbnails={study.thumbnails || []} />
+                )}
               </HStack>
 
-              <Divider my={4} borderColor="gray.700" />
+              {/* <Divider my={4} borderColor="gray.700" />
 
               {loadingThumbs ? (
                 <Spinner size="sm" color="gray.400" />
               ) : (
                 <ThumbnailsGrid thumbnails={study.thumbnails || []} />
-              )}
+              )} */}
             </Box>
           ))}
         </VStack>
@@ -231,7 +234,7 @@ export default function StudiesPage() {
 const fetchThumbnails = async (studyUID: string): Promise<Thumbnail[]> => {
   try {
     // 1) Get series for the study (typed)
-    const { data: series } = await axios.get<DicomJsonItem[]>(
+    const { data: series } = await api.get<DicomJsonItem[]>(
       `${API_URL}/dicomweb/studies/${encodeURIComponent(
         studyUID
       )}/series`,
@@ -245,7 +248,7 @@ const fetchThumbnails = async (studyUID: string): Promise<Thumbnail[]> => {
       const seriesUID = v(s, "0020000E");
       if (!seriesUID) continue;
 
-      const { data: instances } = await axios.get<DicomJsonItem[]>(
+      const { data: instances } = await api.get<DicomJsonItem[]>(
         `${API_URL}/dicomweb/studies/${encodeURIComponent(
           studyUID
         )}/series/${encodeURIComponent(seriesUID)}/instances`,

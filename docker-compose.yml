@@ -116,6 +116,8 @@ services:
     image: jodogne/orthanc-plugins:1.12.4
     environment:
       ORTHANC_NAME: DICOM Toolkit Archive
+    ports:
+      - "8042:8042"
     volumes:
       - ./infra/orthanc/orthanc.json:/etc/orthanc/orthanc.json:ro
       - orthanc-storage:/var/lib/orthanc/db

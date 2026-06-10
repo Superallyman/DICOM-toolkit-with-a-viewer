@@ -1,3 +1,5 @@
+//pages/jobs.tsx
+
 import { AddIcon, ExternalLinkIcon, RepeatIcon } from "@chakra-ui/icons";
 import {
   Badge,
